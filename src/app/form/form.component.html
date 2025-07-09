@@ -1,0 +1,402 @@
+<!-- Reactive Forms Demonstration -->
+<div class="form-container">
+  <h1>Reactive Forms Demo</h1>
+  <p>Comprehensive demonstration of Angular Reactive Forms</p>
+
+  <!-- Form Controls -->
+  <div class="form-controls">
+    <button type="button" (click)="loadSampleData()" class="btn btn-secondary">Load Sample Data</button>
+    <button type="button" (click)="resetForm()" class="btn btn-secondary">Reset Form</button>
+  </div>
+
+  <!-- Main Form -->
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="reactive-form">
+    
+    <!-- Personal Information Section -->
+    <fieldset class="form-section">
+      <legend>Personal Information</legend>
+      
+      <!-- Name Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name *</label>
+          <input 
+            id="firstName"
+            type="text" 
+            formControlName="firstName"
+            [class.error]="hasError(userForm, 'firstName')"
+            placeholder="Enter your first name">
+          <div class="error-message" *ngIf="hasError(userForm, 'firstName')">
+            {{ getErrorMessage(userForm, 'firstName') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+          <input 
+            id="lastName"
+            type="text" 
+            formControlName="lastName"
+            [class.error]="hasError(userForm, 'lastName')"
+            placeholder="Enter your last name">
+          <div class="error-message" *ngIf="hasError(userForm, 'lastName')">
+            {{ getErrorMessage(userForm, 'lastName') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Email with Async Validation -->
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          id="email"
+          type="email" 
+          formControlName="email"
+          [class.error]="hasError(userForm, 'email')"
+          [class.pending]="getControl(userForm, 'email')?.pending"
+          placeholder="Enter your email">
+        <div class="pending-message" *ngIf="getControl(userForm, 'email')?.pending">
+          Checking email availability...
+        </div>
+        <div class="error-message" *ngIf="hasError(userForm, 'email')">
+          {{ getErrorMessage(userForm, 'email') }}
+        </div>
+      </div>
+
+      <!-- Phone and Age -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input 
+            id="phone"
+            type="tel" 
+            formControlName="phone"
+            [class.error]="hasError(userForm, 'phone')"
+            placeholder="+1-555-123-4567">
+          <div class="error-message" *ngIf="hasError(userForm, 'phone')">
+            {{ getErrorMessage(userForm, 'phone') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age *</label>
+          <input 
+            id="age"
+            type="number" 
+            formControlName="age"
+            [class.error]="hasError(userForm, 'age')"
+            placeholder="18"
+            min="18" max="120">
+          <div class="error-message" *ngIf="hasError(userForm, 'age')">
+            {{ getErrorMessage(userForm, 'age') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Gender and Country -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gender">Gender *</label>
+          <select id="gender" formControlName="gender" [class.error]="hasError(userForm, 'gender')">
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
+          <div class="error-message" *ngIf="hasError(userForm, 'gender')">
+            Gender is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Country *</label>
+          <select id="country" formControlName="country" [class.error]="hasError(userForm, 'country')">
+            <option value="">Select Country</option>
+            <option value="USA">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="Japan">Japan</option>
+            <option value="India">India</option>
+          </select>
+          <div class="error-message" *ngIf="hasError(userForm, 'country')">
+            Country is required
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Address Section (Nested FormGroup) -->
+    <fieldset class="form-section" formGroupName="address">
+      <legend>Address Information</legend>
+      
+      <div class="form-group">
+        <label for="street">Street Address *</label>
+        <input 
+          id="street"
+          type="text" 
+          formControlName="street"
+          [class.error]="hasError(addressForm, 'street')"
+          placeholder="123 Main Street">
+        <div class="error-message" *ngIf="hasError(addressForm, 'street')">
+          {{ getErrorMessage(addressForm, 'street') }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City *</label>
+          <input 
+            id="city"
+            type="text" 
+            formControlName="city"
+            [class.error]="hasError(addressForm, 'city')"
+            placeholder="New York">
+          <div class="error-message" *ngIf="hasError(addressForm, 'city')">
+            {{ getErrorMessage(addressForm, 'city') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="state">State/Province</label>
+          <input 
+            id="state"
+            type="text" 
+            formControlName="state"
+            placeholder="NY">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="zipCode">Zip Code *</label>
+          <input 
+            id="zipCode"
+            type="text" 
+            formControlName="zipCode"
+            [class.error]="hasError(addressForm, 'zipCode')"
+            placeholder="10001">
+          <div class="error-message" *ngIf="hasError(addressForm, 'zipCode')">
+            {{ getErrorMessage(addressForm, 'zipCode') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="addressCountry">Country *</label>
+          <select id="addressCountry" formControlName="country" [class.error]="hasError(addressForm, 'country')">
+            <option value="">Select Country</option>
+            <option value="USA">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Australia">Australia</option>
+          </select>
+          <div class="error-message" *ngIf="hasError(addressForm, 'country')">
+            Country is required
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Interests Section (FormArray) -->
+    <fieldset class="form-section">
+      <legend>Interests (FormArray Example)</legend>
+      
+      <div formArrayName="interests">
+        <div *ngFor="let interest of interestsArray.controls; let i = index" class="form-array-item">
+          <div class="form-group">
+            <label>Interest {{ i + 1 }}</label>
+            <div class="input-with-button">
+              <input 
+                type="text" 
+                [formControlName]="i"
+                [class.error]="interest.invalid && interest.touched"
+                placeholder="Enter an interest">
+              <button type="button" (click)="removeInterest(i)" class="btn btn-remove">Remove</button>
+            </div>
+            <div class="error-message" *ngIf="interest.invalid && interest.touched">
+              Interest is required
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" (click)="addInterest()" class="btn btn-add">Add Interest</button>
+    </fieldset>
+
+    <!-- Password Section -->
+    <fieldset class="form-section">
+      <legend>Security</legend>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input 
+            id="password"
+            type="password" 
+            formControlName="password"
+            [class.error]="hasError(userForm, 'password')"
+            placeholder="Enter password">
+          <div class="error-message" *ngIf="hasError(userForm, 'password')">
+            {{ getErrorMessage(userForm, 'password') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <input 
+            id="confirmPassword"
+            type="password" 
+            formControlName="confirmPassword"
+            [class.error]="hasError(userForm, 'confirmPassword')"
+            placeholder="Confirm password">
+          <div class="error-message" *ngIf="hasError(userForm, 'confirmPassword')">
+            {{ getErrorMessage(userForm, 'confirmPassword') }}
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Checkboxes -->
+    <fieldset class="form-section">
+      <legend>Preferences</legend>
+      
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="agreeToTerms">
+          <span class="checkmark"></span>
+          I agree to the Terms and Conditions *
+        </label>
+        <div class="error-message" *ngIf="hasError(userForm, 'agreeToTerms')">
+          You must agree to the terms and conditions
+        </div>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="newsletter">
+          <span class="checkmark"></span>
+          Subscribe to newsletter
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+        Submit Form
+      </button>
+      <button type="button" (click)="resetForm()" class="btn btn-secondary">
+        Reset
+      </button>
+    </div>
+  </form>
+
+  <!-- Skills Section (Separate Form with FormArray) -->
+  <form [formGroup]="dynamicForm" class="skills-form">
+    <fieldset class="form-section">
+      <legend>Skills (Dynamic FormArray)</legend>
+      
+      <div formArrayName="skills">
+        <div *ngFor="let skill of skillsArray.controls; let i = index" 
+             [formGroupName]="i" 
+             class="skill-item">
+          
+          <h4>Skill {{ i + 1 }}</h4>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Skill Name *</label>
+              <input 
+                type="text" 
+                formControlName="name"
+                [class.error]="hasSkillError(i, 'name')"
+                placeholder="e.g., JavaScript">
+              <div class="error-message" *ngIf="hasSkillError(i, 'name')">
+                Skill name is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Level *</label>
+              <select formControlName="level" [class.error]="hasSkillError(i, 'level')">
+                <option value="">Select Level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Expert">Expert</option>
+              </select>
+              <div class="error-message" *ngIf="hasSkillError(i, 'level')">
+                Level is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Years of Experience *</label>
+              <input 
+                type="number" 
+                formControlName="yearsOfExperience"
+                [class.error]="hasSkillError(i, 'yearsOfExperience')"
+                placeholder="0"
+                min="0">
+              <div class="error-message" *ngIf="hasSkillError(i, 'yearsOfExperience')">
+                Years of experience is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <button type="button" (click)="removeSkill(i)" class="btn btn-remove">Remove Skill</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" (click)="addSkill()" class="btn btn-add">Add Skill</button>
+    </fieldset>
+  </form>
+
+  <!-- Form Status Information -->
+  <div class="form-status">
+    <h3>Form Status</h3>
+    <div class="status-grid">
+      <div class="status-item">
+        <strong>Main Form Valid:</strong> 
+        <span [class]="userForm.valid ? 'valid' : 'invalid'">
+          {{ userForm.valid ? 'Valid' : 'Invalid' }}
+        </span>
+      </div>
+      <div class="status-item">
+        <strong>Skills Form Valid:</strong> 
+        <span [class]="dynamicForm.valid ? 'valid' : 'invalid'">
+          {{ dynamicForm.valid ? 'Valid' : 'Invalid' }}
+        </span>
+      </div>
+      <div class="status-item">
+        <strong>Main Form Touched:</strong> 
+        <span>{{ userForm.touched ? 'Yes' : 'No' }}</span>
+      </div>
+      <div class="status-item">
+        <strong>Main Form Dirty:</strong> 
+        <span>{{ userForm.dirty ? 'Yes' : 'No' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Values Display -->
+  <div class="form-values" *ngIf="formData">
+    <h3>Submitted Form Data</h3>
+    <pre>{{ formData | json }}</pre>
+  </div>
+
+  <!-- Real-time Form Values (for debugging) -->
+  <div class="form-debug">
+    <h3>Real-time Form Values</h3>
+    <details>
+      <summary>Click to view current form values</summary>
+      <pre>{{ userForm.value | json }}</pre>
+      <pre>{{ dynamicForm.value | json }}</pre>
+    </details>
+  </div>
+</div>

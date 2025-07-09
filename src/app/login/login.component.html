@@ -1,0 +1,165 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>🔐 LRMS Login</h1>
+      <p>Access the Learning Management System</p>
+    </div>
+
+    <!-- Current Status (if already logged in) -->
+    <div class="current-status" *ngIf="isLoggedIn">
+      <div class="status-info">
+        <h3>Already Logged In</h3>
+        <p>You are currently logged in as: <strong>{{ currentUser?.name }}</strong></p>
+        <p>Role: <span class="role-badge" [class]="'role-' + currentUser?.role">{{ currentUser?.role | titlecase }}</span></p>
+      </div>
+      <div class="status-actions">
+        <button (click)="router.navigate([returnUrl])" class="btn btn-primary">
+          Continue to {{ returnUrl }}
+        </button>
+        <button (click)="logout()" class="btn btn-secondary">
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-form-container" *ngIf="!isLoggedIn">
+      
+      <!-- Return URL Info -->
+      <div class="return-url-info" *ngIf="returnUrl !== '/dashboard'">
+        <i>🔄</i>
+        <span>You'll be redirected to: <strong>{{ returnUrl }}</strong></span>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="error">
+        <i>⚠️</i> {{ error }}
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <span>Logging in...</span>
+      </div>
+
+      <!-- Login Form -->
+      <form (ngSubmit)="onLogin()" class="login-form" *ngIf="!isLoading">
+        <div class="form-group">
+          <label for="email">Email Address:</label>
+          <input 
+            id="email"
+            type="email" 
+            [(ngModel)]="loginForm.email"
+            name="email"
+            placeholder="Enter your email"
+            required
+            autocomplete="email"
+            [disabled]="isLoading">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input 
+            id="password"
+            type="password" 
+            [(ngModel)]="loginForm.password"
+            name="password"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+            [disabled]="isLoading">
+          <small class="password-hint">Demo password: password123</small>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-login"
+          [disabled]="!loginForm.email || isLoading">
+          <span *ngIf="!isLoading">🔓 Login</span>
+          <span *ngIf="isLoading">⏳ Logging in...</span>
+        </button>
+      </form>
+
+      <!-- Demo Users Section -->
+      <div class="demo-section">
+        <h3>🚀 Quick Login (Demo Users)</h3>
+        <p>Click any user below to login instantly:</p>
+        
+        <div class="demo-users" *ngIf="demoUsers.length > 0">
+          <div 
+            class="demo-user-card" 
+            *ngFor="let user of demoUsers"
+            (click)="quickLogin(user)"
+            >
+            
+            <div class="user-info">
+              <strong>{{ user.name }}</strong>
+              <span class="user-email">{{ user.email }}</span>
+              <span class="role-badge" [class]="'role-' + user.role">
+                {{ user.role | titlecase }}
+              </span>
+            </div>
+            
+            <div class="user-features">
+              <span *ngIf="user.role === 'admin'" class="feature">👑 Full Access</span>
+              <span *ngIf="user.role === 'moderator'" class="feature">🛡️ Moderate</span>
+              <span *ngIf="user.role === 'user'" class="feature">👤 Standard</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-demo" *ngIf="demoUsers.length === 0">
+          <div class="loading-spinner"></div>
+          <span>Loading demo users...</span>
+        </div>
+      </div>
+
+      <!-- Additional Options -->
+      <div class="additional-options">
+        <button (click)="goToRegister()" class="btn btn-link">
+          📝 Don't have an account? Register here
+        </button>
+        
+        <button (click)="router.navigate(['/'])" class="btn btn-link">
+          🏠 Return to Home
+        </button>
+      </div>
+    </div>
+
+    <!-- AuthGuard Information Panel -->
+    <div class="info-panel">
+      <h3>🛡️ AuthGuard Demonstration</h3>
+      <div class="info-content">
+        <div class="info-section">
+          <h4>Protected Routes:</h4>
+          <ul>
+            <li><strong>/admin</strong> - Requires admin role</li>
+            <li><strong>/protected</strong> - Requires authentication</li>
+            <li><strong>/moderator</strong> - Requires moderator+ role</li>
+            <li><strong>/profile</strong> - Requires authentication</li>
+          </ul>
+        </div>
+        
+        <div class="info-section">
+          <h4>Guard Types Demonstrated:</h4>
+          <ul>
+            <li><strong>CanActivate</strong> - Route protection</li>
+            <li><strong>CanActivateChild</strong> - Child route protection</li>
+            <li><strong>CanMatch</strong> - Lazy loading protection</li>
+            <li><strong>CanDeactivate</strong> - Unsaved changes protection</li>
+          </ul>
+        </div>
+
+        <div class="info-section">
+          <h4>Features:</h4>
+          <ul>
+            <li>🔄 Automatic redirect after login</li>
+            <li>👑 Role-based access control</li>
+            <li>💾 Unsaved changes protection</li>
+            <li>🔐 Authentication state management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

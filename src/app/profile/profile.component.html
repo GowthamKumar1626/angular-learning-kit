@@ -1,0 +1,213 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>👤 User Profile</h1>
+    <p>Manage your personal information and account settings</p>
+    <p class="guard-info">
+      🛡️ Protected by: <strong>AuthGuard</strong> + <strong>UnsavedChangesGuard</strong>
+    </p>
+  </div>
+
+  <!-- Save Message -->
+  <div class="save-message" *ngIf="saveMessage" [class.success]="saveMessage.includes('successfully')" [class.error]="saveMessage.includes('Error')">
+    <i>{{ saveMessage.includes('successfully') ? '✅' : '⚠️' }}</i>
+    {{ saveMessage }}
+  </div>
+
+  <!-- Current User Information -->
+  <div class="current-user-info" *ngIf="currentUser">
+    <h2>Current User Information</h2>
+    <div class="user-card">
+      <div class="user-avatar">
+        {{ currentUser.name.charAt(0).toUpperCase() }}
+      </div>
+      <div class="user-details">
+        <h3>{{ currentUser.name }}</h3>
+        <p class="user-email">{{ currentUser.email }}</p>
+        <span class="role-badge" [class]="'role-' + currentUser.role">
+          {{ currentUser.role | titlecase }}
+        </span>
+        <p class="member-since">
+          Member since: {{ currentUser.createdAt | date:'longDate' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="profile-form-section">
+    <div class="form-header">
+      <h2>Profile Settings</h2>
+      <div class="form-actions" *ngIf="!isEditing">
+        <button (click)="startEditing()" class="btn btn-primary">
+          ✏️ Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Unsaved Changes Warning -->
+    <div class="unsaved-warning" *ngIf="_hasUnsavedChanges">
+      <i>⚠️</i>
+      <span>You have unsaved changes. Don't forget to save!</span>
+    </div>
+
+    <form class="profile-form" *ngIf="originalUser">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name:</label>
+          <input 
+            id="name"
+            type="text" 
+            [(ngModel)]="profileForm.name"
+            name="name"
+            (input)="onFormChange()"
+            [readonly]="!isEditing"
+            [class.readonly]="!isEditing"
+            placeholder="Enter your full name"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address:</label>
+          <input 
+            id="email"
+            type="email" 
+            [(ngModel)]="profileForm.email"
+            name="email"
+            (input)="onFormChange()"
+            [readonly]="!isEditing"
+            [class.readonly]="!isEditing"
+            placeholder="Enter your email address"
+            required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select 
+            id="role"
+            [(ngModel)]="profileForm.role"
+            name="role"
+            (change)="onFormChange()"
+            [disabled]="!isEditing"
+            [class.readonly]="!isEditing">
+            <option value="user">User</option>
+            <option value="moderator">Moderator</option>
+            <option value="admin">Admin</option>
+          </select>
+          <small class="role-note" *ngIf="isEditing">
+            Note: Role changes require admin approval
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>Account Status:</label>
+          <div class="status-display">
+            <span class="status-indicator" [class.active]="currentUser?.isActive">
+              {{ currentUser?.isActive ? 'Active' : 'Inactive' }}
+            </span>
+            <small>Contact admin to change account status</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions" *ngIf="isEditing">
+        <button 
+          type="button"
+          (click)="saveProfile()" 
+          class="btn btn-success"
+          [disabled]="!_hasUnsavedChanges || isSaving">
+          <span *ngIf="!isSaving">💾 Save Changes</span>
+          <span *ngIf="isSaving">⏳ Saving...</span>
+        </button>
+        
+        <button 
+          type="button"
+          (click)="cancelEditing()" 
+          class="btn btn-secondary"
+          [disabled]="isSaving">
+          ❌ Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Guard Demonstration -->
+  <div class="guard-demo-section">
+    <h2>🛡️ Guard Demonstration</h2>
+    
+    <div class="demo-grid">
+      <!-- UnsavedChangesGuard Demo -->
+      <div class="demo-card">
+        <h3>🚫 UnsavedChangesGuard</h3>
+        <div class="demo-content">
+          <p><strong>Status:</strong> 
+            <span class="guard-status" [class.active]="_hasUnsavedChanges">
+              {{ _hasUnsavedChanges ? 'Active (Blocking Navigation)' : 'Inactive' }}
+            </span>
+          </p>
+          <p><strong>Purpose:</strong> Prevents navigation when there are unsaved changes</p>
+          <div class="demo-actions">
+            <p><strong>Test it:</strong></p>
+            <ol>
+              <li>Click "Edit Profile" above</li>
+              <li>Make some changes to your profile</li>
+              <li>Try to navigate away using the buttons below</li>
+              <li>You'll get a confirmation dialog!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- AuthGuard Demo -->
+      <div class="demo-card">
+        <h3>🔐 AuthGuard</h3>
+        <div class="demo-content">
+          <p><strong>Status:</strong> 
+            <span class="guard-status active">
+              Active (You're authenticated!)
+            </span>
+          </p>
+          <p><strong>Purpose:</strong> Ensures only authenticated users can access this page</p>
+          <div class="demo-actions">
+            <p><strong>Test it:</strong></p>
+            <button (click)="logout()" class="btn btn-warning btn-small">
+              🚪 Logout & Test Guard
+            </button>
+            <small>You'll be redirected to login and then back here!</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Test -->
+  <div class="navigation-test">
+    <h2>🧭 Test Navigation Guards</h2>
+    <p>Use these buttons to test different guard behaviors:</p>
+    
+    <div class="nav-buttons">
+      <button (click)="goToProtected()" class="btn btn-info">
+        🔐 Protected Area (AuthGuard)
+      </button>
+      
+      <button (click)="goToAdmin()" class="btn btn-danger">
+        👑 Admin Dashboard (AdminGuard)
+      </button>
+      
+      <button (click)="logout()" class="btn btn-warning">
+        🚪 Logout
+      </button>
+    </div>
+    
+    <div class="navigation-info">
+      <h4>Expected Behaviors:</h4>
+      <ul>
+        <li><strong>With Unsaved Changes:</strong> You'll get a confirmation dialog before navigation</li>
+        <li><strong>Admin Dashboard:</strong> Will redirect to login/unauthorized if you don't have admin role</li>
+        <li><strong>Logout:</strong> Will clear session and redirect to login</li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,280 @@
+<!-- Angular Binding Examples -->
+<div class="binding-container">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+
+    <!-- 1. INTERPOLATION BINDING {{ }} -->
+    <section class="binding-section">
+        <h2>1. Interpolation Binding {{ '{{ }}' }}</h2>
+        <p><strong>String:</strong> {{ userName }}</p>
+        <p><strong>Number:</strong> {{ userAge }}</p>
+        <p><strong>Email:</strong> {{ userEmail }}</p>
+        <p><strong>Date:</strong> {{ currentDate | date:'medium' }}</p>
+        <p><strong>Expression:</strong> {{ userName.length > 5 ? 'Long Name' : 'Short Name' }}</p>
+        <p><strong>Method Call:</strong> {{ getCurrentTime() }}</p>
+        <p><strong>HTML Content (escaped):</strong> {{ htmlContent }}</p>
+    </section>
+
+    <!-- 2. PROPERTY BINDING [property] -->
+    <section class="binding-section">
+        <h2>2. Property Binding [property]</h2>
+        
+        <!-- Image property binding -->
+        <img [src]="imageUrl" [alt]="imageAlt" [width]="150" [height]="150">
+        
+        <!-- Input property binding -->
+        <input [value]="userName" [disabled]="isDisabled" [placeholder]="'Enter your name'">
+        
+        <!-- Button property binding -->
+        <button [disabled]="isDisabled">{{ isDisabled ? 'Disabled' : 'Enabled' }}</button>
+        
+        <!-- Div property binding -->
+        <div [style.background-color]="backgroundColor" [style.border-width.px]="borderWidth">
+            Property bound background color
+        </div>
+        
+        <!-- innerHTML property binding -->
+        <div [innerHTML]="htmlContent"></div>
+    </section>
+
+    <!-- 3. ATTRIBUTE BINDING [attr.attribute] -->
+    <section class="binding-section">
+        <h2>3. Attribute Binding [attr.attribute]</h2>
+        
+        <!-- Table with colspan attribute -->
+        <table border="1">
+            <tr>
+                <td [attr.colspan]="colSpan">Spanning {{ colSpan }} columns</td>
+            </tr>
+            <tr>
+                <td>Cell 1</td>
+                <td>Cell 2</td>
+            </tr>
+        </table>
+        
+        <!-- Custom data attribute -->
+        <div [attr.data-value]="dataValue" [attr.aria-label]="ariaLabel">
+            Custom attributes bound
+        </div>
+        
+        <!-- ARIA attributes -->
+        <button [attr.aria-pressed]="isActive" [attr.aria-label]="ariaLabel">
+            ARIA Button
+        </button>
+    </section>
+
+    <!-- 4. CLASS BINDING [class] -->
+    <section class="binding-section">
+        <h2>4. Class Binding [class]</h2>
+        
+        <!-- Single class binding -->
+        <p [class.active]="isActive">Single class binding (active: {{ isActive }})</p>
+        
+        <!-- Multiple class binding -->
+        <p [class]="customClass">Custom class binding</p>
+        
+        <!-- Class object binding -->
+        <p [ngClass]="classObject">Class object binding</p>
+        
+        <!-- Conditional class binding -->
+        <p [class.error]="hasError" [class.primary]="isPrimary">
+            Conditional classes (error: {{ hasError }}, primary: {{ isPrimary }})
+        </p>
+        
+        <!-- String class binding -->
+        <p [class]="isActive ? 'active highlight' : 'inactive'">
+            String class binding
+        </p>
+    </section>
+
+    <!-- 5. STYLE BINDING [style] -->
+    <section class="binding-section">
+        <h2>5. Style Binding [style]</h2>
+        
+        <!-- Single style binding -->
+        <p [style.color]="textColor">Single style binding (color: {{ textColor }})</p>
+        
+        <!-- Style with units -->
+        <p [style.font-size.px]="fontSize">Font size: {{ fontSize }}px</p>
+        
+        <!-- Multiple style binding -->
+        <p [style.background-color]="backgroundColor" [style.padding]="'10px'">
+            Multiple style binding
+        </p>
+        
+        <!-- Style object binding -->
+        <p [ngStyle]="styleObject">Style object binding</p>
+        
+        <!-- Conditional style binding -->
+        <p [style.font-weight]="isActive ? 'bold' : 'normal'">
+            Conditional style binding
+        </p>
+    </section>
+
+    <!-- 6. EVENT BINDING (event) -->
+    <section class="binding-section">
+        <h2>6. Event Binding (event)</h2>
+        
+        <!-- Click event -->
+        <button (click)="onButtonClick()">Click me! ({{ clickCount }})</button>
+        
+        <!-- Mouse events -->
+        <div (mousemove)="onMouseMove($event)" style="border: 1px solid; padding: 20px; margin: 10px 0;">
+            Mouse position: X={{ mousePosition.x }}, Y={{ mousePosition.y }}
+        </div>
+        
+        <!-- Keyboard events -->
+        <input (keyup)="onKeyPress($event)" placeholder="Type something">
+        <p>Last key pressed: {{ keyPressed }}</p>
+        
+        <!-- Input event -->
+        <input (input)="onInputChange($event)" placeholder="Input event">
+        <p>Input value: {{ inputValue }}</p>
+        
+        <!-- Multiple events -->
+        <button (click)="toggleActive()" (mouseenter)="onMouseMove($event)">
+            Toggle Active ({{ isActive }})
+        </button>
+    </section>
+
+    <!-- 7. TWO-WAY BINDING [(ngModel)] -->
+    <section class="binding-section">
+        <h2>7. Two-Way Binding [(ngModel)]</h2>
+        
+        <!-- Text input two-way binding -->
+        <label>Search: </label>
+        <input [(ngModel)]="searchText" placeholder="Search...">
+        <p>Search text: {{ searchText }}</p>
+        
+        <!-- Select dropdown two-way binding -->
+        <label>Select option: </label>
+        <select [(ngModel)]="selectedOption">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+        <p>Selected: {{ selectedOption }}</p>
+        
+        <!-- Checkbox two-way binding -->
+        <label>
+            <input type="checkbox" [(ngModel)]="isChecked">
+            Check me ({{ isChecked }})
+        </label>
+        
+        <!-- Range slider two-way binding -->
+        <label>Slider: </label>
+        <input type="range" [(ngModel)]="sliderValue" min="0" max="100">
+        <p>Slider value: {{ sliderValue }}</p>
+        <input #sliderIncrement type="number" min="0" max="100">
+        <button (click)="incrementSlider(+sliderIncrement.value)">+</button>
+        <button (click)="decrementSlider(+sliderIncrement.value)">-</button>
+    </section>
+
+    <!-- COMBINED EXAMPLES -->
+    <section class="binding-section">
+        <h2>8. Combined Binding Examples</h2>
+        
+        <!-- Interactive card -->
+        <div [class.active]="isActive" 
+             [style.background-color]="backgroundColor"
+             [style.border-width.px]="borderWidth"
+             (click)="toggleActive()">
+            <h3>Interactive Card</h3>
+            <p>Click to toggle active state</p>
+            <p>Status: {{ isActive ? 'Active' : 'Inactive' }}</p>
+        </div>
+        
+        <!-- Dynamic form -->
+        <div>
+            <h3>Dynamic Form</h3>
+            <input [(ngModel)]="userName" [disabled]="isDisabled" placeholder="Name">
+            <input [(ngModel)]="userAge" type="number" [disabled]="isDisabled" placeholder="Age">
+            <button (click)="toggleDisabled()">{{ isDisabled ? 'Enable' : 'Disable' }} Form</button>
+        </div>
+    </section>
+
+    <!-- CONTROL BUTTONS -->
+    <section class="binding-section">
+        <h2>9. Control Buttons</h2>
+        <button (click)="toggleDisabled()">Toggle Disabled</button>
+        <button (click)="toggleActive()">Toggle Active</button>
+        <button (click)="toggleError()">Toggle Error</button>
+        <button (click)="changeBackgroundColor()">Change Background</button>
+        <button (click)="increaseFontSize()">Increase Font</button>
+        <button (click)="decreaseFontSize()">Decrease Font</button>
+        <button (click)="resetUserDetails()">Reset User</button>
+    </section>
+</div>
+
+<style>
+.binding-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.binding-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.binding-section h2 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.active {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+}
+
+.error {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+}
+
+.primary {
+    color: #007bff !important;
+}
+
+.highlight {
+    background-color: yellow;
+    padding: 5px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-large {
+    font-size: 1.2em;
+}
+
+button {
+    margin: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+input, select {
+    margin: 5px;
+    padding: 5px;
+}
+
+table {
+    margin: 10px 0;
+}
+
+td {
+    padding: 8px;
+}
+</style>

@@ -1,0 +1,69 @@
+<p>{{title}}</p>
+<p>{{description}}</p>
+<p>Welcome to the dashboard!</p>
+
+<div *ngIf="dashboardData">
+  <h3>Dashboard Data:</h3>
+  <pre>{{ dashboardData | json }}</pre>
+</div>
+
+@if(dashboardData) {
+  <p>Data loaded successfully!</p>
+    <div>
+        <h3>Dashboard Data:</h3>
+        <pre>{{ dashboardData | json }}</pre>
+    </div>
+} @else if (dashboardData === null) {
+  <p>No data available.</p>
+} @else {
+  <p>Loading data...</p>
+}
+
+<!-- First update -->
+<div *ngIf="firstUpdate">
+  <h3>First Update (NgZone):</h3>
+  <p>{{ firstUpdate }}</p>
+</div>
+
+<div *ngIf="firstUpdateSignal()">
+  <h3>First Update (Signals):</h3>
+  <p>{{ firstUpdateSignal() }}</p>
+</div>
+
+<div>
+  <h3>1. Updates (NgZone approach):</h3>
+  <ul>
+    <li *ngFor="let update of updates">{{ update }}</li>
+  </ul>
+</div>
+
+<div>
+  <h3>2. Updates (Signals approach - automatic change detection):</h3>
+  <ul>
+    <li *ngFor="let update of updatesSignal()">{{ update }}</li>
+  </ul>
+</div>
+
+<div>
+  <h3>3. Updates (ChangeDetectorRef approach - manual change detection):</h3>
+  <ul>
+    <li *ngFor="let update of updatesCDR">{{ update }}</li>
+  </ul>
+</div>
+
+<div>
+  <h3>4. Updates (Async Pipe approach - reactive):</h3>
+  <ul>
+    <li *ngFor="let update of updates$ | async">{{ update }}</li>
+  </ul>
+</div>
+
+<div style="margin-top: 20px; padding: 10px; background-color: #f0f8ff; border-radius: 5px;">
+  <h4>📊 Change Detection Comparison:</h4>
+  <ul>
+    <li><strong>NgZone:</strong> Runs callbacks inside Angular's zone</li>
+    <li><strong>Signals:</strong> Automatically triggers change detection on update</li>
+    <li><strong>ChangeDetectorRef:</strong> Manual trigger with detectChanges()</li>
+    <li><strong>Async Pipe:</strong> Automatically handles subscription & change detection</li>
+  </ul>
+</div>

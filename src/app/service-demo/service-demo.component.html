@@ -1,0 +1,281 @@
+<div class="service-demo-container">
+  <h1>Service Injection & &#64;Injectable Demonstration</h1>
+  
+  <!-- Service Information Panel -->
+  <div class="info-panel">
+    <h2>About &#64;Injectable and Dependency Injection</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <h3>What is &#64;Injectable?</h3>
+        <p>&#64;Injectable is a decorator that marks a class as available for dependency injection. It tells Angular's injector how to create and provide instances of the service.</p>
+      </div>
+      <div class="info-item">
+        <h3>Service Registration</h3>
+        <p>providedIn: 'root' registers the service as a singleton at the application level, making it available everywhere.</p>
+      </div>
+      <div class="info-item">
+        <h3>Injection Methods</h3>
+        <p>Services can be injected via constructor injection or the inject() function (Angular 14+).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current User Status -->
+  <div class="status-panel">
+    <h2>Current User Status</h2>
+    <div class="current-user" *ngIf="currentUser; else notLoggedIn">
+      <div class="user-info">
+        <strong>{{ currentUser.name }}</strong> ({{ currentUser.role }})
+        <span class="status" [class.active]="currentUser.isActive" [class.inactive]="!currentUser.isActive">
+          {{ currentUser.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+      <div class="user-actions">
+        <span class="admin-badge" *ngIf="isCurrentUserAdmin">ADMIN</span>
+        <button (click)="logout()" class="btn btn-secondary">Logout</button>
+      </div>
+    </div>
+    <ng-template #notLoggedIn>
+      <p class="not-logged-in">No user logged in</p>
+    </ng-template>
+  </div>
+
+  <!-- Service Statistics -->
+  <div class="stats-panel">
+    <h2>Service Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">{{ userCount }}</span>
+        <span class="stat-label">Total Users</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ activeUserCount }}</span>
+        <span class="stat-label">Active Users</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ users.length - activeUserCount }}</span>
+        <span class="stat-label">Inactive Users</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <div class="error-message" *ngIf="error">
+    <i>⚠️</i> {{ error }}
+    <button (click)="error = null" class="close-error">×</button>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <span>Loading...</span>
+  </div>
+
+  <!-- User Management Section -->
+  <div class="management-section">
+    <h2>User Management</h2>
+    
+    <!-- Create New User Form -->
+    <div class="create-user-section">
+      <h3>Create New User</h3>
+      <form (ngSubmit)="createUser()" class="create-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="userName">Name:</label>
+            <input 
+              id="userName"
+              type="text" 
+              [(ngModel)]="newUser.name"
+              name="userName"
+              placeholder="Enter user name"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="userEmail">Email:</label>
+            <input 
+              id="userEmail"
+              type="email" 
+              [(ngModel)]="newUser.email"
+              name="userEmail"
+              placeholder="Enter email address"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="userRole">Role:</label>
+            <select 
+              id="userRole"
+              [(ngModel)]="newUser.role"
+              name="userRole">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="moderator">Moderator</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="newUser.isActive"
+                name="isActive">
+              Active User
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" [disabled]="!newUser.name || !newUser.email || isLoading">
+          Create User
+        </button>
+      </form>
+    </div>
+
+    <!-- Search Users -->
+    <div class="search-section">
+      <h3>Search Users</h3>
+      <div class="search-form">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          (input)="searchUsers()"
+          placeholder="Search by name, email, or role"
+          class="search-input">
+      </div>
+      
+      <div class="search-results" *ngIf="searchResults.length > 0">
+        <h4>Search Results ({{ searchResults.length }})</h4>
+        <div class="user-list">
+          <div class="user-card" *ngFor="let user of searchResults">
+            <div class="user-details">
+              <strong>{{ user.name }}</strong>
+              <span class="user-email">{{ user.email }}</span>
+              <span class="user-role">{{ user.role | titlecase }}</span>
+              <span class="status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <div class="user-actions">
+              <button (click)="loginAsUser(user)" class="btn btn-small">Login As</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button (click)="loadUsers()" class="btn btn-secondary" [disabled]="isLoading">
+        Reload Users
+      </button>
+      <button (click)="loadActiveUsers()" class="btn btn-secondary" [disabled]="isLoading">
+        Load Active Users Only
+      </button>
+    </div>
+  </div>
+
+  <!-- All Users List -->
+  <div class="users-section">
+    <h2>All Users ({{ users.length }})</h2>
+    <p class="section-description">
+      This list is automatically updated when users are created, updated, or deleted 
+      through the reactive stream from the UserService.
+    </p>
+    
+    <div class="user-list" *ngIf="users.length > 0; else noUsers">
+      <div class="user-card" *ngFor="let user of users; trackBy: trackByUserId">
+        <div class="user-details">
+          <div class="user-header">
+            <strong>{{ user.name }}</strong>
+            <span class="user-id">#{{ user.id }}</span>
+          </div>
+          <div class="user-info">
+            <span class="user-email">{{ user.email }}</span>
+            <span class="user-role badge" [class]="'role-' + user.role">{{ user.role | titlecase }}</span>
+            <span class="status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <div class="user-meta">
+            <small>Created: {{ user.createdAt | date:'short' }}</small>
+          </div>
+        </div>
+        
+        <div class="user-actions">
+          <button 
+            (click)="toggleUserStatus(user)" 
+            class="btn btn-small"
+            [class.btn-warning]="user.isActive"
+            [class.btn-success]="!user.isActive">
+            {{ user.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+          
+          <button 
+            (click)="loginAsUser(user)" 
+            class="btn btn-small btn-info"
+            *ngIf="user.isActive">
+            Login As
+          </button>
+          
+          <button 
+            (click)="deleteUser(user)" 
+            class="btn btn-small btn-danger"
+            *ngIf="user.id !== currentUser?.id">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template #noUsers>
+      <p class="no-data">No users found.</p>
+    </ng-template>
+  </div>
+
+  <!-- Service Methods Demonstration -->
+  <div class="methods-demo">
+    <h2>Service Methods Demonstrated</h2>
+    <div class="methods-grid">
+      <div class="method-item">
+        <h4>CRUD Operations</h4>
+        <ul>
+          <li>✅ getAllUsers()</li>
+          <li>✅ createUser()</li>
+          <li>✅ updateUser() (via toggleUserStatus)</li>
+          <li>✅ deleteUser()</li>
+        </ul>
+      </div>
+      
+      <div class="method-item">
+        <h4>Query Methods</h4>
+        <ul>
+          <li>✅ getActiveUsers()</li>
+          <li>✅ searchUsers()</li>
+          <li>✅ getUserCount()</li>
+          <li>✅ getActiveUserCount()</li>
+        </ul>
+      </div>
+      
+      <div class="method-item">
+        <h4>Authentication</h4>
+        <ul>
+          <li>✅ setCurrentUser()</li>
+          <li>✅ getCurrentUser()</li>
+          <li>✅ logout()</li>
+          <li>✅ isLoggedIn()</li>
+          <li>✅ isAdmin()</li>
+        </ul>
+      </div>
+      
+      <div class="method-item">
+        <h4>Reactive Streams</h4>
+        <ul>
+          <li>✅ getUsersStream()</li>
+          <li>✅ getCurrentUserStream()</li>
+          <li>✅ users$ Observable</li>
+          <li>✅ currentUser$ Observable</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
